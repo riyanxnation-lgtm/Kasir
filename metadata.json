@@ -1,0 +1,6 @@
+{
+  "name": "DapurKasir POS",
+  "description": "Aplikasi kasir (POS) dan laporan penjualan kuliner PWA dengan mode offline, manajemen menu, shift kasir, dan analitik bisnis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

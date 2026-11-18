@@ -1,0 +1,254 @@
+{
+  "entities": {
+    "Outlet": {
+      "title": "Outlet",
+      "description": "Outlet profile, tax, service charge, and receipt configuration.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "address": { "type": "string", "maxLength": 300 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "npwp": { "type": "string", "maxLength": 40 },
+        "operatingHours": { "type": "string", "maxLength": 100 },
+        "taxPercent": { "type": "number" },
+        "serviceChargePercent": { "type": "number" },
+        "receiptHeader": { "type": "string", "maxLength": 200 },
+        "receiptFooter": { "type": "string", "maxLength": 200 },
+        "qrisMerchantName": { "type": "string", "maxLength": 120 },
+        "qrisImageUrl": { "type": "string", "maxLength": 2000 },
+        "timezone": { "type": "string", "maxLength": 64 },
+        "currency": { "type": "string", "maxLength": 10 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "taxPercent", "serviceChargePercent", "timezone", "currency", "updatedAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Authenticated outlet staff member with role-based permissions.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "email": { "type": "string", "format": "email", "maxLength": 160 },
+        "role": { "type": "string", "enum": ["owner", "manager", "cashier"] },
+        "pinHash": { "type": "string", "maxLength": 128 },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "outletId", "name", "email", "role", "isActive", "createdAt", "updatedAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Menu product category.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "sortOrder": { "type": "number" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "outletId", "name", "sortOrder", "isActive"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Culinary menu item with pricing, availability, and modifier group references.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "categoryId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "sku": { "type": "string", "maxLength": 40 },
+        "price": { "type": "number" },
+        "costPrice": { "type": "number" },
+        "iconType": { "type": "string", "maxLength": 40 },
+        "modifierGroupIds": { "type": "array" },
+        "isAvailable": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "outletId", "categoryId", "name", "price", "isAvailable", "isActive", "createdAt", "updatedAt"]
+    },
+    "ModifierGroup": {
+      "title": "ModifierGroup",
+      "description": "Variant or add-on modifier group (e.g. Level Pedas, Topping).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "isRequired": { "type": "boolean" },
+        "minSelect": { "type": "number" },
+        "maxSelect": { "type": "number" },
+        "options": { "type": "array" }
+      },
+      "required": ["id", "outletId", "name", "isRequired", "minSelect", "maxSelect", "options"]
+    },
+    "Discount": {
+      "title": "Discount",
+      "description": "Configured promotional or voucher discount.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "type": { "type": "string", "enum": ["percent", "nominal"] },
+        "value": { "type": "number" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "outletId", "name", "type", "value", "isActive"]
+    },
+    "Shift": {
+      "title": "Shift",
+      "description": "Cashier register shift record with opening and closing cash reconciliation.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userName": { "type": "string", "maxLength": 100 },
+        "openedAt": { "type": "string", "format": "date-time" },
+        "closedAt": { "type": "string", "format": "date-time" },
+        "openingCash": { "type": "number" },
+        "expectedCash": { "type": "number" },
+        "actualCash": { "type": "number" },
+        "cashDifference": { "type": "number" },
+        "status": { "type": "string", "enum": ["open", "closed"] },
+        "note": { "type": "string", "maxLength": 300 }
+      },
+      "required": ["id", "outletId", "userId", "userName", "openedAt", "openingCash", "status"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Petty cash expense recorded during an open shift.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "shiftId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "amount": { "type": "number" },
+        "createdBy": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdByName": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "outletId", "shiftId", "description", "amount", "createdBy", "createdByName", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "POS order with denormalized item snapshots, selected modifiers, and payment entries.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "orderNumber": { "type": "string", "maxLength": 40 },
+        "queueNumber": { "type": "number" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "shiftId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userName": { "type": "string", "maxLength": 100 },
+        "orderType": { "type": "string", "enum": ["dine_in", "takeaway", "delivery"] },
+        "tableOrCustomerName": { "type": "string", "maxLength": 80 },
+        "status": { "type": "string", "enum": ["hold", "new", "preparing", "ready", "completed", "cancelled", "void"] },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "discountId": { "type": "string", "maxLength": 64 },
+        "discountName": { "type": "string", "maxLength": 80 },
+        "discountAmount": { "type": "number" },
+        "taxAmount": { "type": "number" },
+        "serviceAmount": { "type": "number" },
+        "total": { "type": "number" },
+        "payments": { "type": "array" },
+        "paidAmount": { "type": "number" },
+        "changeAmount": { "type": "number" },
+        "note": { "type": "string", "maxLength": 240 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "voidReason": { "type": "string", "maxLength": 240 },
+        "voidBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "orderNumber", "queueNumber", "outletId", "shiftId", "userId", "userName", "orderType", "status", "items", "subtotal", "discountAmount", "taxAmount", "serviceAmount", "total", "payments", "paidAmount", "changeAmount", "createdAt", "updatedAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable activity audit record for sensitive operations (void, menu price changes, user role updates).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "outletId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userName": { "type": "string", "maxLength": 100 },
+        "action": { "type": "string", "maxLength": 60 },
+        "entity": { "type": "string", "maxLength": 40 },
+        "entityId": { "type": "string", "maxLength": 64 },
+        "detail": { "type": "string", "maxLength": 400 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "outletId", "userId", "userName", "action", "entity", "entityId", "detail", "createdAt"]
+    },
+    "DailyStat": {
+      "title": "DailyStat",
+      "description": "Daily sales summary aggregate for fast owner dashboard loading.",
+      "type": "object",
+      "properties": {
+        "dateKey": { "type": "string", "maxLength": 20, "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "outletId": { "type": "string", "maxLength": 64 },
+        "revenue": { "type": "number" },
+        "orderCount": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["dateKey", "outletId", "revenue", "orderCount", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/outlet/{outletId}": {
+      "schema": { "$ref": "#/entities/Outlet" },
+      "description": "Outlet profile and tax/receipt settings."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Staff accounts with RBAC roles and hashed PINs."
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Menu categories."
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Menu items with availability and pricing."
+    },
+    "/modifierGroups/{groupId}": {
+      "schema": { "$ref": "#/entities/ModifierGroup" },
+      "description": "Product variant and add-on modifier groups."
+    },
+    "/discounts/{discountId}": {
+      "schema": { "$ref": "#/entities/Discount" },
+      "description": "Outlet discount rules."
+    },
+    "/shifts/{shiftId}": {
+      "schema": { "$ref": "#/entities/Shift" },
+      "description": "Cashier shift opening and closing records."
+    },
+    "/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Shift petty cash expenses."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "POS orders with item snapshots and payments."
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Immutable activity audit trail."
+    },
+    "/dailyStats/{dateKey}": {
+      "schema": { "$ref": "#/entities/DailyStat" },
+      "description": "Daily sales summary cache."
+    }
+  }
+}
